@@ -1,4 +1,4 @@
-# 🤖 Nexus Bot - Bot Discord Multifonctionnel Open-Source
+# 🤖 Nexus - Bot Discord Multifonctionnel Open-Source
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)

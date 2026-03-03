@@ -25,6 +25,12 @@ from discord import PCMVolumeTransformer
 import pytube
 from pytube import YouTube
 
+# Import du chargeur de configuration
+from config_loader import init_config
+
+# Initialisation de la configuration depuis le fichier YAML
+init_config()
+
 
 def _require_env(var_name: str) -> str:
     """Retrieve a required environment variable or raise a runtime error."""
@@ -37,80 +43,41 @@ def _require_env(var_name: str) -> str:
 
 
 # ==================================
-# 🔑 CONFIGURATION CLÉS (À REMPLACER)
+# 🔑 CONFIGURATION CHARGÉE DEPUIS config.yml
 # ==================================
-IMAGINE_MAINTENANCE = False
-SUPPORT_SERVER_ID = 1430518750397988967 # L'ID DE VOTRE SERVEUR DE SUPPORT
-TICKET_CATEGORY_ID = 0 # variable innutile
-IA_COMPORTEMENT = """Tu es Nexus, une IA Discord avancée avec des capacités de gestion de serveur.
-
-CAPACITÉS SPÉCIALES:
-- Tu peux créer des salons textuels avec des permissions personnalisées
-- Tu peux créer des rôles avec des noms et couleurs personnalisés
-- Tu es dans Discord et tu interagis avec les membres du serveur
-
-COMMENT CRÉER:
-- Pour créer un salon: cette feature est encore en dévoloppement et ne marche pas encore mais dis : "crée un salon nommé [nom]" ou "crée-moi un salon [nom]"
-- Pour créer un rôle: cette feature est encore en dévoloppement et ne marche pas encore mais dis : "crée un rôle nommé [nom]" ou "crée-moi un rôle [nom]"
-
-EXEMPLES:
-- "crée un salon nommé discussions"
-- "crée un rôle nommé VIP"
-- "fait moi un salon appelé général"
-
-IMPORTANT: Quand tu détectes une demande de création, utilise les fonctions internes du bot. Sois proactif et propose des créations quand c'est pertinent.
-
-Sois utile, amical et aide les utilisateurs à gérer leur serveur Discord."""
-INVITE_URL = "VOTRE INVITE POUR LE BOT"
-OWNER_ID = 1139156246965002310  # VOTRE UTILISATEUR ID
-DISCORD_TOKEN = "VOTRE TOKEN DISCORD"
-OPENAI_API_KEY = "VOTRE API CHATGPT"
-EVENT_MODE_ENABLED = False # True pour IA Illimitée pour TOUS
-CREDIT_BOOST_MULTIPLIER = 1 # Multiplicateur de crédits (Ex: 2 pour doubler les récompenses)
+# Toutes les variables sont maintenant chargées depuis config.yml via config_loader.py
+# Modifiez le fichier config.yml pour changer ces valeurs
 
 # ==================================
 # 🎵 SYSTÈME DE MUSIQUE AUTOMATIQUE
 # ==================================
-music_channels = {}  # Variables globales pour la musique
+# Variables globales pour la musique
+music_channels = {}
 voice_clients = {}
 music_queues = {}
 now_playing = {}
 music_paused = {}  # Pour suivre l'état pause/reprise
 music_volume = {}  # Pour le contrôle du volume
 vote_skip_sessions = {}  # Pour les votes de skip
-FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-YDL_OPTIONS = {'format': 'bestaudio/best', 'noplaylist': True, 'quiet': True, 'no_warnings': True}
+# FFMPEG_OPTIONS et YDL_OPTIONS sont maintenant chargés depuis config.yml
 
-# Fichier de sauvegarde
-DATA_FILE = "data.json"
+# Fichier de sauvegarde (chargé depuis config.yml)
+# DATA_FILE est maintenant défini dans config.yml
 
-# Anti-spam IA
-LIMIT = 3
-PERIOD = 60 # 3 messages max par utilisateur toutes les 60 secondes pour l'IA (désactivé si priorité)
+# Anti-spam IA (chargé depuis config.yml)
+# LIMIT et PERIOD sont maintenant définis dans config.yml
 user_message_log = {}
 
 # ==================================
-# FONCTION DE GESTION DES QUÊTES (NOUVEAU)
+# 🎯 SYSTÈME DE QUÊTES
 # ==================================
+# Les variables de quêtes sont maintenant chargées depuis config.yml :
+# - POSSIBLE_QUESTS
+# - TIER_1_QUESTS_REQUIRED
+# - TIER_2_QUESTS_REQUIRED
+# - MAX_TIER
 
-# Quêtes possibles
-POSSIBLE_QUESTS = [
-    {
-        "name": "Parler avec l'IA",
-        "description": "Utilise le salon IA pour envoyer 5 messages.",
-        "type": "ia_messages", # Le compteur doit s'incrémenter ailleurs (dans on_message)
-        "target": 5,
-        "reward_money": 250
-    },
-    {
-        "name": "Réclamer le Daily",
-        "description": "Réclame ta récompense journalière avec /daily.",
-        "type": "econ_action_daily", # Le compteur est incrémenté dans /daily
-        "target": 1,
-        "reward_money": 100
-    }
-]
-
+# Variables pour les options de quêtes (gardées pour compatibilité)
 QUEST_OPTIONS = [
     # Clés pour la logique on_message
     {"type": "messages", "goal": 10, "reward": 50, "description": "Envoyer 10 messages dans n'importe quel canal.", "icon": "💬"},
@@ -261,10 +228,10 @@ DAILY_QUEST_TIERS = {
     ]
 }
 
-# --- NOUVELLES CONSTANTES DE PROGRESSION ---
-TIER_1_QUESTS_REQUIRED = 5
-TIER_2_QUESTS_REQUIRED = 15
-MAX_TIER = 3
+# Les constantes de progression sont maintenant chargées depuis config.yml :
+# - TIER_1_QUESTS_REQUIRED
+# - TIER_2_QUESTS_REQUIRED  
+# - MAX_TIER
 
 # ==================================
 # 💾 FONCTIONS DE SAUVEGARDE
@@ -737,8 +704,8 @@ def ensure_user(user_id):
     if user_id not in data:
         # --- NOUVEAU PROFIL : Initialisation complète ---
         data[user_id] = {
-            "credits": 10,  # Crédits de départ (pour IA)
-            "money": 0,     # Monnaie virtuelle (pour la boutique)
+            "credits": STARTING_CREDITS,  # Crédits de départ (pour IA) - chargé depuis config.yml
+            "money": STARTING_MONEY,     # Monnaie virtuelle (pour la boutique) - chargé depuis config.yml
             "image_tokens": 0,
             "level": 0,
             "xp": 0,
@@ -759,8 +726,8 @@ def ensure_user(user_id):
         user_data = data[user_id]
         
         # S'assurer que les clés essentielles existent avec une valeur par défaut si absentes
-        user_data.setdefault("credits", 10) # 10 par défaut si absents (ajustez si besoin)
-        user_data.setdefault("money", 0)
+        user_data.setdefault("credits", STARTING_CREDITS) # Valeur par défaut depuis config.yml
+        user_data.setdefault("money", STARTING_MONEY) # Valeur par défaut depuis config.yml
         user_data.setdefault("image_tokens", 0)
         user_data.setdefault("level", 0)
         user_data.setdefault("xp", 0)
@@ -805,7 +772,7 @@ async def add_money(user_id):
     user_id_str = str(user_id)
     ensure_user(user_id_str)
     
-    amount = random.randint(3, 5)
+    amount = random.randint(DAILY_REWARD_MIN, DAILY_REWARD_MAX)  # Valeurs chargées depuis config.yml
     data[user_id_str]["money"] += amount
     save_data()
 
@@ -2025,7 +1992,7 @@ async def imagine_command(interaction: discord.Interaction, prompt: str):
     global EVENT_MODE_ENABLED
     has_unlimited_access = is_guild_premium or is_vip or EVENT_MODE_ENABLED
     
-    COST_IMAGE = 5 # Coût de l'image
+    # COST_IMAGE est maintenant chargé depuis config.yml
     credits_key = "credits" 
     credit_deducted = False
 

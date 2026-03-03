@@ -1,0 +1,6 @@
+discord.py
+openai
+replicate
+yt-dlp
+pytube
+PyYAML

@@ -1,0 +1,123 @@
+# ==================================
+# 🔑 CONFIGURATION DU BOT NEXUS
+# ==================================
+# Fichier de configuration principal pour modifier facilement les variables du bot
+
+# ==================================
+# 📋 INFORMATIONS ESSENTIELLES
+# ==================================
+bot:
+  token: "VOTRE TOKEN DISCORD"  # Token du bot Discord
+  owner_id: 1139156246965002310  # ID utilisateur du propriétaire
+  support_server_id: 1430518750397988967  # ID du serveur de support
+  invite_url: "VOTRE INVITE POUR LE BOT"  # URL d'invitation du bot
+  command_prefix: ","  # Préfixe des commandes
+
+# ==================================
+# 🤖 INTELLIGENCE ARTIFICIELLE
+# ==================================
+ai:
+  openai_api_key: "VOTRE API CHATGPT"  # Clé API OpenAI
+  behavior_prompt: |
+    Tu es Nexus, une IA Discord avancée avec des capacités de gestion de serveur.
+
+    CAPACITÉS SPÉCIALES:
+    - Tu peux créer des salons textuels avec des permissions personnalisées
+    - Tu peux créer des rôles avec des noms et couleurs personnalisés
+    - Tu es dans Discord et tu interagis avec les membres du serveur
+
+    COMMENT CRÉER:
+    - Pour créer un salon: cette feature est encore en dévoloppement et ne marche pas encore mais dis : "crée un salon nommé [nom]" ou "crée-moi un salon [nom]"
+    - Pour créer un rôle: cette feature est encore en dévoloppement et ne marche pas encore mais dis : "crée un rôle nommé [nom]" ou "crée-moi un rôle [nom]"
+
+    EXEMPLES:
+    - "crée un salon nommé discussions"
+    - "crée un rôle nommé VIP"
+    - "fait moi un salon appelé général"
+
+    IMPORTANT: Quand tu détectes une demande de création, utilise les fonctions internes du bot. Sois proactif et propose des créations quand c'est pertinent.
+
+    Sois utile, amical et aide les utilisateurs à gérer leur serveur Discord.
+  
+  # Coûts et limites
+  image_generation_cost: 5  # Coût en crédits pour générer une image
+  
+  # Anti-spam
+  message_limit: 3  # Nombre max de messages par utilisateur
+  period_seconds: 60  # Période en secondes pour la limite
+
+# ==================================
+# 🎵 SYSTÈME MUSIQUE
+# ==================================
+music:
+  ffmpeg_options:
+    before_options: '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'
+    options: '-vn'
+  
+  ydl_options:
+    format: 'bestaudio/best'
+    noplaylist: true
+    quiet: true
+    no_warnings: true
+
+# ==================================
+# 💰 ÉCONOMIE ET CRÉDITS
+# ==================================
+economy:
+  credit_boost_multiplier: 1  # Multiplicateur de crédits (Ex: 2 pour doubler les récompenses)
+  daily_reward_min: 3  # Récompense minimale pour message
+  daily_reward_max: 5  # Récompense maximale pour message
+  
+  # Crédits de départ
+  starting_credits: 10  # Crédits IA de départ
+  starting_money: 0  # Argent de départ
+
+# ==================================
+# 🎯 SYSTÈME DE QUÊTES
+# ==================================
+quests:
+  # Seuils de progression
+  tier_1_quests_required: 5
+  tier_2_quests_required: 15
+  max_tier: 3
+  
+  # Quêtes disponibles
+  possible_quests:
+    - name: "Parler avec l'IA"
+      description: "Utilise le salon IA pour envoyer 5 messages."
+      type: "ia_messages"
+      target: 5
+      reward_money: 250
+    
+    - name: "Réclamer le Daily"
+      description: "Réclame ta récompense journalière avec /daily."
+      type: "econ_action_daily"
+      target: 1
+      reward_money: 100
+
+# ==================================
+# 🎟️ ROLES ET PERMISSIONS
+# ==================================
+roles:
+  vip_role_id: null  # ID du rôle VIP (mettre null si non utilisé)
+  ticket_category_id: 0  # ID de la catégorie pour les tickets (0 = pas de catégorie)
+
+# ==================================
+# ⚙️ MODES ET FONCTIONNALITÉS
+# ==================================
+features:
+  imagine_maintenance: false  # Maintenance du mode image
+  event_mode_enabled: false  # Mode événement (IA illimitée pour tous)
+  
+# ==================================
+# 📁 FICHIERS ET STOCKAGE
+# ==================================
+storage:
+  data_file: "data.json"  # Fichier de sauvegarde des données
+
+# ==================================
+# 🔧 DÉVELOPPEMENT
+# ==================================
+development:
+  debug_mode: false  # Activer les messages de debug
+  auto_save: true  # Sauvegarde automatique des données
